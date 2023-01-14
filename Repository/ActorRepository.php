@@ -4,16 +4,14 @@
 function getActorsFromMovie(int $id): array{
     require '../Service/Database.php';
 
-    $sql = "SELECT actors.* FROM movie_actors 
-            INNER JOIN actors ON movie_actors.actor_id = actors.id
-            WHERE movie_actors.movie_id = :id;";
+    $sql = "";
 
-    $getActorFromMovieStmt = $db->prepare($sql);
-    $getActorFromMovieStmt->execute([
+    $getActorsFromMovieStmt = $db->prepare($sql);
+    $getActorsFromMovieStmt->execute([
         'id' => $id
     ]);
 
-    return $getActorFromMovieStmt->fetchAll(PDO::FETCH_ASSOC);
+    return $getActorsFromMovieStmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function getActors(): array{
@@ -41,12 +39,6 @@ function getActorById(int $id): array{
 function createActor($firstname, $lastname, $dob, $bio): array{
     require '../Service/Database.php';
 
-    $sql = "SELECT MAX(id) FROM actors";
-    $getActorsCountStmt = $db->prepare($sql);
-    $getActorsCountStmt->execute();
-
-    $lastId = $getActorsCountStmt->fetch(PDO::FETCH_COLUMN);
-
     $sql = "INSERT INTO actors (`first_name`, `last_name`, `dob`, `bio`) VALUES (:firstname, :lastname, :dob, :bio)";
     $createActorStmt = $db->prepare($sql);
     $createActorStmt->execute([
@@ -55,6 +47,12 @@ function createActor($firstname, $lastname, $dob, $bio): array{
         'dob' => $dob,
         'bio' => $bio
     ]);
+
+    $sql = "SELECT MAX(id) FROM actors";
+    $getActorsCountStmt = $db->prepare($sql);
+    $getActorsCountStmt->execute();
+
+    $lastId = $getActorsCountStmt->fetch(PDO::FETCH_COLUMN);
 
     return getActorById($lastId);
 }

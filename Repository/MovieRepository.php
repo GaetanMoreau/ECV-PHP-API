@@ -25,12 +25,6 @@ function getMovieById(int $id): array{
 function createMovie($title, $releasedate, $plot, $runtime): array{
     require '../Service/Database.php';
 
-    $sql = "SELECT MAX(id) FROM movies";
-    $getMoviesCountStmt = $db->prepare($sql);
-    $getMoviesCountStmt->execute();
-
-    $lastId = $getMoviesCountStmt->fetch(PDO::FETCH_COLUMN);
-
     $sql = "INSERT INTO movies (`title`, `release_date`, `plot`, `runtime`) VALUES (:title, :releasedate, :plot, :runtime)";
     $createMovieStmt = $db->prepare($sql);
     $createMovieStmt->execute([
@@ -39,6 +33,12 @@ function createMovie($title, $releasedate, $plot, $runtime): array{
         'plot' => $plot,
         'runtime' => $runtime
     ]);
+
+    $sql = "SELECT MAX(id) FROM movies";
+    $getMoviesCountStmt = $db->prepare($sql);
+    $getMoviesCountStmt->execute();
+
+    $lastId = $getMoviesCountStmt->fetch(PDO::FETCH_COLUMN);
 
     return getMovieById($lastId);
 }

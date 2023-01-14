@@ -23,7 +23,7 @@ function getGenres(): array{
 
     return $getGenresStmt->fetchAll(PDO::FETCH_ASSOC);
 }
-//TODO : ne fonctionne pas erreur 405 not allowed
+
 function getGenreById(int $id): array{
     require '../Service/Database.php';
 
@@ -53,7 +53,7 @@ function createGenre($name): array{
 
     return getGenreById($lastId);
 }
-//TODO : ne fonctionne pas erreur 405 not allowed
+
 function updateGenre(int $id, $name): array{
     require '../Service/Database.php';
 
@@ -67,7 +67,7 @@ function updateGenre(int $id, $name): array{
 
     return getGenreById($id);
 }
-//TODO : ne fonctionne pas erreur 405 not allowed
+
 function deleteGenre(int $id): void{
     require '../Service/Database.php';
 

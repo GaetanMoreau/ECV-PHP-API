@@ -23,7 +23,7 @@ function getDirectors(): array{
 
     return $getDirectorsStmt->fetchAll(PDO::FETCH_ASSOC);
 }
-//TODO : ne fonctionne pas erreur 405 not allowed
+
 function getDirectorById(int $id): array{
     require '../Service/Database.php';
 
@@ -56,7 +56,7 @@ function createDirector($firstname, $lastname, $dob, $bio): array{
 
     return getDirectorById($lastId);
 }
-//TODO : ne fonctionne pas erreur 405 not allowed
+
 function updateDirector(int $id, $firstname, $lastname, $dob, $bio): array{
     require '../Service/Database.php';
 
@@ -73,7 +73,7 @@ function updateDirector(int $id, $firstname, $lastname, $dob, $bio): array{
 
     return getDirectorById($id);
 }
-//TODO : ne fonctionne pas erreur 405 not allowed
+
 function deleteDirector(int $id): void{
     require '../Service/Database.php';
 

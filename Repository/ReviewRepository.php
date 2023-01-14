@@ -23,7 +23,7 @@ function getReviews(): array{
 
     return $getReviewsStmt->fetchAll(PDO::FETCH_ASSOC);
 }
-//TODO : ne fonctionne pas erreur 405 not allowed
+
 function getReviewById(int $id): array{
     require '../Service/Database.php';
 
@@ -56,7 +56,7 @@ function createReview($movieid, $username, $content, $date): array{
 
     return getReviewById($lastId);
 }
-//TODO : ne fonctionne pas erreur 405 not allowed
+
 function updateReview(int $id, $movieid, $username, $content, $date): array{
     require '../Service/Database.php';
 
@@ -73,7 +73,7 @@ function updateReview(int $id, $movieid, $username, $content, $date): array{
 
     return getReviewById($id);
 }
-//TODO : ne fonctionne pas erreur 405 not allowed
+
 function deleteReview(int $id): void{
     require '../Service/Database.php';
 

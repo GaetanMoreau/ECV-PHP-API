@@ -23,7 +23,7 @@ function getActors(): array{
 
     return $getActorsStmt->fetchAll(PDO::FETCH_ASSOC);
 }
-//TODO : ne fonctionne pas erreur 405 not allowed
+
 function getActorById(int $id): array{
     require '../Service/Database.php';
 
@@ -56,7 +56,7 @@ function createActor($firstname, $lastname, $dob, $bio): array{
 
     return getActorById($lastId);
 }
-//TODO : ne fonctionne pas erreur 405 not allowed
+
 function updateActor(int $id, $firstname, $lastname, $dob, $bio): array{
     require '../Service/Database.php';
 
@@ -73,7 +73,7 @@ function updateActor(int $id, $firstname, $lastname, $dob, $bio): array{
 
     return getActorById($id);
 }
-//TODO : ne fonctionne pas erreur 405 not allowed
+
 function deleteActor(int $id): void{
     require '../Service/Database.php';
 

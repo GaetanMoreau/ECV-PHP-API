@@ -1,10 +1,30 @@
 <?php
 
-//TODO : trouver la bonne condition dans le controller
+function getMoviesFromActor(int $id): array{
+    require '../Service/Database.php';
+
+    $sql = "SELECT * FROM movies
+    JOIN movie_actors ON movie.id = movie_actors.movie_id
+    JOIN actors ON actor.id = movie_actors.actor_id
+    WHERE actor.id = :id";
+
+
+    $getActorsFromMovieStmt = $db->prepare($sql);
+    $getActorsFromMovieStmt->execute([
+        'id' => $id
+    ]);
+
+    return $getActorsFromMovieStmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function getActorsFromMovie(int $id): array{
     require '../Service/Database.php';
 
-    $sql = "";
+    $sql = "SELECT * FROM actors
+    JOIN movie_actors ON actors.id = movie_actors.actor_id
+    JOIN movies ON movies.id = movie_actors.movie_id
+    WHERE movies.id = :id";
+
 
     $getActorsFromMovieStmt = $db->prepare($sql);
     $getActorsFromMovieStmt->execute([

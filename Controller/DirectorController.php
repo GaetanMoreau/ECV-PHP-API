@@ -8,29 +8,40 @@ $id = $_GET['id'] ?? null;
 switch($requestMethod){
     case "GET":
         if ($id){
-            $director = getDirectorById($id);
-            if($director) {
-                http_response_code(200);
-                echo json_encode($director);
+            if(preg_match("/directors\/\d+\/movies", $_SERVER['REQUEST_URI'])) {
+                $movies = getMoviesFromDirector($id);
+                if($movies) {
+                    http_response_code(200);
+                    echo json_encode($movies);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['code' => 404, 'message' => "Aucun film trouvé pour le directeur $id"]);
+                }
+            }
+            elseif(preg_match("/directors\/\d+/", $_SERVER['REQUEST_URI'])) {
+                $director = getDirectorById($id);
+                if($director) {
+                    http_response_code(200);
+                    echo json_encode($director);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['code' => 404, 'message' => "Le directeur avec l'id $id n'existe pas"]);
+                }
             } else {
-                http_response_code(404);
-                echo json_encode(['code' => 404, 'message' => "Le directeur avec l'id $id n'existe pas"]);
+                $directors = getDirectorsFromMovie($id);
+                if(!empty($directors)) {
+                    http_response_code(200);
+                    echo json_encode($directors);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Aucun directeur trouvé pour ce film']);
+                }
             }
         } else{
             $directors = getDirectors();
             http_response_code(200);
             echo json_encode($directors);
         }
-
-        /*$directors = getDirectorsFromMovie($id);
-        if(!empty($directors)) {
-            http_response_code(200);
-            echo json_encode($directors);
-        } else {
-            http_response_code(404);
-            echo json_encode(['error' => 'Aucun directeur trouvé pour ce film']);
-        }*/
-
         break;
     case "POST":
         $data = json_decode(file_get_contents('php://input'));

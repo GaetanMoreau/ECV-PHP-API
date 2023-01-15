@@ -8,29 +8,40 @@ $id = $_GET['id'] ?? null;
 switch($requestMethod){
     case "GET":
         if ($id){
-            $actor = getActorById($id);
-            if($actor) {
-                http_response_code(200);
-                echo json_encode($actor);
+            if(preg_match("/actors\/\d+\/movies/", $_SERVER['REQUEST_URI'])) {
+                $movies = getMoviesFromActor($id);
+                if($movies) {
+                    http_response_code(200);
+                    echo json_encode($movies);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['code' => 404, 'message' => "Aucun film trouvé pour l'acteur $id"]);
+                }
+            }
+            elseif(preg_match("/actors\/\d+/", $_SERVER['REQUEST_URI'])) {
+                $actor = getActorById($id);
+                if($actor) {
+                    http_response_code(200);
+                    echo json_encode($actor);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['code' => 404, 'message' => "L'acteur avec l'id $id n'existe pas"]);
+                }
             } else {
-                http_response_code(404);
-                echo json_encode(['code' => 404, 'message' => "L'acteur avec l'id $id n'existe pas"]);
+                $actors = getActorsFromMovie($id);
+                if(!empty($actors)) {
+                    http_response_code(200);
+                    echo json_encode($actors);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Aucun acteur trouvé pour ce film']);
+                }
             }
         } else{
             $actors = getActors();
             http_response_code(200);
             echo json_encode($actors);
         }
-
-        /*$actors = getActorsFromMovie($id);
-        if(!empty($actors)) {
-            http_response_code(200);
-            echo json_encode($actors);
-        } else {
-            http_response_code(404);
-            echo json_encode(['error' => 'Aucun acteur trouvé pour ce film']);
-        }*/
-
         break;
     case "POST":
         $data = json_decode(file_get_contents('php://input'));

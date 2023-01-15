@@ -1,10 +1,12 @@
 <?php
 
-//TODO : trouver la bonne condition dans le controller
 function getReviewsFromMovie(int $id): array{
     require '../Service/Database.php';
 
-    $sql = "";
+    $sql = "SELECT * FROM reviews
+    JOIN movie_reviews ON reviews.id = movie_reviews.review_id
+    JOIN movies ON movies.id = movie_reviews.movie_id
+    WHERE movies.id = :id";
 
     $getReviewsFromMovieStmt = $db->prepare($sql);
     $getReviewsFromMovieStmt->execute([

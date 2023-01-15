@@ -8,29 +8,30 @@ $id = $_GET['id'] ?? null;
 switch($requestMethod){
     case "GET":
         if ($id){
-            $genre = getGenreById($id);
-            if($genre) {
-                http_response_code(200);
-                echo json_encode($genre);
+            if(preg_match("/genres\/\d+/", $_SERVER['REQUEST_URI'])) {
+                $genre = getGenreById($id);
+                if($genre) {
+                    http_response_code(200);
+                    echo json_encode($genre);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['code' => 404, 'message' => "Le genre avec l'id $id n'existe pas"]);
+                }
             } else {
-                http_response_code(404);
-                echo json_encode(['code' => 404, 'message' => "Le genre avec l'id $id n'existe pas"]);
+                $genres = getGenresFromMovie($id);
+                if(!empty($genres)) {
+                    http_response_code(200);
+                    echo json_encode($genres);
+                } else {
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Aucun genre trouvé pour ce film']);
+                }
             }
         } else{
             $genres = getGenres();
             http_response_code(200);
             echo json_encode($genres);
         }
-
-        /*$genres = getGenresFromMovie($id);
-        if(!empty($genres)) {
-            http_response_code(200);
-            echo json_encode($genres);
-        } else {
-            http_response_code(404);
-            echo json_encode(['error' => 'Aucun genre trouvé pour ce film']);
-        }*/
-
         break;
     case "POST":
         $data = json_decode(file_get_contents('php://input'));

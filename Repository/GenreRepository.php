@@ -1,9 +1,25 @@
 <?php
 
+function getMoviesFromGenre(int $id): array{
+    require '../Service/Database.php';
+
+    $sql = "SELECT movies.id, title, release_date, plot, runtime, genres.id as genre_id FROM movies
+    JOIN movie_genres ON movies.id = movie_genres.movie_id
+    JOIN genres ON genres.id = movie_genres.genre_id
+    WHERE genres.id = :id";
+
+    $getMoviesFromGenreStmt = $db->prepare($sql);
+    $getMoviesFromGenreStmt->execute([
+        'id' => $id
+    ]);
+
+    return $getMoviesFromGenreStmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function getGenresFromMovie(int $id): array{
     require '../Service/Database.php';
 
-    $sql = "SELECT * FROM genres
+    $sql = "SELECT genres.id, name, movies.id as movie_id FROM genres
     JOIN movie_genres ON genres.id = movie_genres.genre_id
     JOIN movies ON movies.id = movie_genres.movie_id
     WHERE movies.id = :id";

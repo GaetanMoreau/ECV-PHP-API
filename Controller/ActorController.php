@@ -8,17 +8,7 @@ $id = $_GET['id'] ?? null;
 switch($requestMethod){
     case "GET":
         if ($id){
-            if(preg_match("/actors\/\d+\/movies/", $_SERVER['REQUEST_URI'])) {
-                $movies = getMoviesFromActor($id);
-                if($movies) {
-                    http_response_code(200);
-                    echo json_encode($movies);
-                } else {
-                    http_response_code(404);
-                    echo json_encode(['code' => 404, 'message' => "Aucun film trouvé pour l'acteur $id"]);
-                }
-            }
-            elseif(preg_match("/actors\/\d+/", $_SERVER['REQUEST_URI'])) {
+            if(preg_match("/actors\/\d+/", $_SERVER['REQUEST_URI'])) {
                 $actor = getActorById($id);
                 if($actor) {
                     http_response_code(200);
@@ -50,7 +40,6 @@ switch($requestMethod){
             $error = ['error' => 400, 'message' => 'Veuillez renseigner tous les champs'];
             echo json_encode($error);
         } else {
-            // Valider les données avant d'insérer
             $actor = createActor($data->firstname, $data->lastname, $data->dob, $data->bio);
             http_response_code(201);
             echo json_encode($actor);
@@ -64,7 +53,6 @@ switch($requestMethod){
             echo json_encode($error);
         } else {
             if ($id) {
-                // Valider les données avant d'insérer
                 $actor = getActorById($id);
                 if(!$actor){
                     http_response_code(404);
@@ -83,16 +71,13 @@ switch($requestMethod){
     case "DELETE":
         if ($id) {
             $actor = getActorById($id);
-
             if(!$actor){
                 http_response_code(404);
                 echo json_encode(['code' => 404, 'message' => "L'acteur avec l'id $id n'existe pas"]);
                 return;
             }
-
             deleteActor($id);
             http_response_code(204);
-
         } else {
             http_response_code(400);
             $error = ['error' => 400, 'message' => "Veuillez renseigner l'id de l'acteur à supprimer"];

@@ -3,9 +3,8 @@
 function getReviewsFromMovie(int $id): array{
     require '../Service/Database.php';
 
-    $sql = "SELECT * FROM reviews
-    JOIN movie_reviews ON reviews.id = movie_reviews.review_id
-    JOIN movies ON movies.id = movie_reviews.movie_id
+    $sql = "SELECT reviews.id, reviews.movie_id, reviews.username, reviews.content, reviews.date FROM reviews 
+    JOIN movies ON movies.id = reviews.movie_id 
     WHERE movies.id = :id";
 
     $getReviewsFromMovieStmt = $db->prepare($sql);

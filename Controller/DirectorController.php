@@ -8,17 +8,7 @@ $id = $_GET['id'] ?? null;
 switch($requestMethod){
     case "GET":
         if ($id){
-            if(preg_match("/directors\/\d+\/movies", $_SERVER['REQUEST_URI'])) {
-                $movies = getMoviesFromDirector($id);
-                if($movies) {
-                    http_response_code(200);
-                    echo json_encode($movies);
-                } else {
-                    http_response_code(404);
-                    echo json_encode(['code' => 404, 'message' => "Aucun film trouvé pour le directeur $id"]);
-                }
-            }
-            elseif(preg_match("/directors\/\d+/", $_SERVER['REQUEST_URI'])) {
+            if(preg_match("/directors\/\d+/", $_SERVER['REQUEST_URI'])) {
                 $director = getDirectorById($id);
                 if($director) {
                     http_response_code(200);
@@ -50,7 +40,6 @@ switch($requestMethod){
             $error = ['error' => 400, 'message' => 'Veuillez renseigner tous les champs'];
             echo json_encode($error);
         } else {
-            // Valider les données avant d'insérer
             $director = createDirector($data->firstname, $data->lastname, $data->dob, $data->bio);
             http_response_code(201);
             echo json_encode($director);
@@ -64,7 +53,6 @@ switch($requestMethod){
             echo json_encode($error);
         } else {
             if ($id) {
-                // Valider les données avant d'insérer
                 $director = getDirectorById($id);
                 if(!$director){
                     http_response_code(404);
@@ -83,16 +71,13 @@ switch($requestMethod){
     case "DELETE":
         if ($id) {
             $director = getDirectorById($id);
-
             if(!$director){
                 http_response_code(404);
                 echo json_encode(['code' => 404, 'message' => "Le directeur avec l'id $id n'existe pas"]);
                 return;
             }
-
             deleteDirector($id);
             http_response_code(204);
-
         } else {
             http_response_code(400);
             $error = ['error' => 400, 'message' => "Veuillez renseigner l'id du directeur à supprimer"];

@@ -40,7 +40,6 @@ switch($requestMethod){
             $error = ['error' => 400, 'message' => 'Veuillez renseigner tous les champs'];
             echo json_encode($error);
         } else {
-            // Valider les données avant d'insérer
             $genre = createGenre($data->name);
             http_response_code(201);
             echo json_encode($genre);
@@ -54,7 +53,6 @@ switch($requestMethod){
             echo json_encode($error);
         } else {
             if ($id) {
-                // Valider les données avant d'insérer
                 $genre = getGenreById($id);
                 if(!$genre){
                     http_response_code(404);
@@ -73,16 +71,13 @@ switch($requestMethod){
     case "DELETE":
         if ($id) {
             $genre = getGenreById($id);
-
             if(!$genre){
                 http_response_code(404);
                 echo json_encode(['code' => 404, 'message' => "Le genre avec l'id $id n'existe pas"]);
                 return;
             }
-
             deleteGenre($id);
             http_response_code(204);
-
         } else {
             http_response_code(400);
             $error = ['error' => 400, 'message' => "Veuillez renseigner l'id du genre à supprimer"];

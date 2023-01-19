@@ -1,13 +1,49 @@
 <?php
 
 require '../Repository/MovieRepository.php';
+require '../Repository/ActorRepository.php';
+require '../Repository/DirectorRepository.php';
+require '../Repository/GenreRepository.php';
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 header('Content-Type: application/json');
 $id = $_GET['id'] ?? null;
+$parent = $_GET['parent'] ?? null;
 
 switch($requestMethod){
     case "GET":
         if ($id){
+            switch ($parent){
+                case "actors":
+                    $movies = getMoviesFromActor($id);
+                    if($movies) {
+                        http_response_code(200);
+                        echo json_encode($movies);
+                    } else {
+                        http_response_code(404);
+                        echo json_encode(['code' => 404, 'message' => "L'acteur avec l'id $id n'est dans aucun film"]);
+                    }
+                    return;
+                case "directors":
+                    $movies = getMoviesFromDirector($id);
+                    if($movies) {
+                        http_response_code(200);
+                        echo json_encode($movies);
+                    } else {
+                        http_response_code(404);
+                        echo json_encode(['code' => 404, 'message' => "Le directeur avec l'id $id n'est dans aucun film"]);
+                    }
+                    return;
+                case "genres":
+                    $movies = getMoviesFromGenre($id);
+                    if($movies) {
+                        http_response_code(200);
+                        echo json_encode($movies);
+                    } else {
+                        http_response_code(404);
+                        echo json_encode(['code' => 404, 'message' => "Le genre avec l'id $id n'est dans aucun film"]);
+                    }
+                    return;
+            }
             $movie = getMovieById($id);
             if($movie) {
                 http_response_code(200);
@@ -29,7 +65,6 @@ switch($requestMethod){
             $error = ['error' => 400, 'message' => 'Veuillez renseigner tous les champs'];
             echo json_encode($error);
         } else {
-            // Valider les données avant d'insérer
             $movie = createMovie($data->title, $data->releasedate, $data->plot, $data->runtime);
             http_response_code(201);
             echo json_encode($movie);
@@ -43,7 +78,6 @@ switch($requestMethod){
             echo json_encode($error);
         } else {
             if ($id) {
-                // Valider les données avant d'insérer
                 $movie = getMovieById($id);
                 if(!$movie){
                     http_response_code(404);
@@ -62,16 +96,13 @@ switch($requestMethod){
     case "DELETE":
         if ($id) {
             $movie = getMovieById($id);
-
             if(!$movie){
                 http_response_code(404);
                 echo json_encode(['code' => 404, 'message' => "Le film avec l'id $id n'existe pas"]);
                 return;
             }
-
             deleteMovie($id);
             http_response_code(204);
-
         } else {
             http_response_code(400);
             $error = ['error' => 400, 'message' => "Veuillez renseigner l'id du film à supprimer"];

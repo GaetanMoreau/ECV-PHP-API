@@ -40,7 +40,6 @@ switch($requestMethod){
             $error = ['error' => 400, 'message' => 'Veuillez renseigner tous les champs'];
             echo json_encode($error);
         } else {
-            // Valider les données avant d'insérer
             $review = createReview($data->movieid, $data->username, $data->content, $data->date);
             http_response_code(201);
             echo json_encode($review);
@@ -54,7 +53,6 @@ switch($requestMethod){
             echo json_encode($error);
         } else {
             if ($id) {
-                // Valider les données avant d'insérer
                 $review = getReviewById($id);
                 if(!$review){
                     http_response_code(404);
@@ -73,16 +71,13 @@ switch($requestMethod){
     case "DELETE":
         if ($id) {
             $review = getReviewById($id);
-
             if(!$review){
                 http_response_code(404);
                 echo json_encode(['code' => 404, 'message' => "La review avec l'id $id n'existe pas"]);
                 return;
             }
-
             deleteReview($id);
             http_response_code(204);
-
         } else {
             http_response_code(400);
             $error = ['error' => 400, 'message' => "Veuillez renseigner l'id de la review à supprimer"];

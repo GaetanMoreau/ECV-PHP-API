@@ -3,24 +3,24 @@
 function getMoviesFromActor(int $id): array{
     require '../Service/Database.php';
 
-    $sql = "SELECT * FROM movies
-    JOIN movie_actors ON movie.id = movie_actors.movie_id
-    JOIN actors ON actor.id = movie_actors.actor_id
-    WHERE actor.id = :id";
+    $sql = "SELECT movies.id, title, release_date, plot, runtime, actors.id as actor_id FROM movies
+    JOIN movie_actors ON movies.id = movie_actors.movie_id
+    JOIN actors ON actors.id = movie_actors.actor_id
+    WHERE actors.id = :id";
 
 
-    $getActorsFromMovieStmt = $db->prepare($sql);
-    $getActorsFromMovieStmt->execute([
+    $getMoviesFromActorStmt = $db->prepare($sql);
+    $getMoviesFromActorStmt->execute([
         'id' => $id
     ]);
 
-    return $getActorsFromMovieStmt->fetchAll(PDO::FETCH_ASSOC);
+    return $getMoviesFromActorStmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function getActorsFromMovie(int $id): array{
     require '../Service/Database.php';
 
-    $sql = "SELECT * FROM actors
+    $sql = "SELECT actors.id, first_name, last_name, dob, bio, movies.id as movie_id FROM actors
     JOIN movie_actors ON actors.id = movie_actors.actor_id
     JOIN movies ON movies.id = movie_actors.movie_id
     WHERE movies.id = :id";

@@ -1,6 +1,7 @@
 <?php
 
 require '../Repository/ReviewRepository.php';
+require '../Utils/ValidationUtils.php';
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 header('Content-Type: application/json');
 $id = $_GET['id'] ?? null;
@@ -35,6 +36,18 @@ switch($requestMethod){
         break;
     case "POST":
         $data = json_decode(file_get_contents('php://input'));
+        $movieid = filter_var($data->movieid, FILTER_SANITIZE_NUMBER_INT);
+        $username = filter_var($data->username, FILTER_SANITIZE_STRING);
+        $content = filter_var($data->content, FILTER_SANITIZE_STRING);
+        $date = filter_var($data->date, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^\d{4}-\d{2}-\d{2}$/")));
+
+        $validatedMovieId = movieidValidation($movieid);
+        $validatedUsername = usernameValidation($username);
+        $validatedContent = contentValidation($content);
+        $validatedDate = dateValidation($date);
+        if ( $validatedMovieId === false || $validatedUsername === false || $validatedContent === false || $validatedDate === false){
+            return;
+        }
         if (!isset($data->movieid, $data->username, $data->content, $data->date)) {
             http_response_code(400);
             $error = ['error' => 400, 'message' => 'Veuillez renseigner tous les champs'];
@@ -47,6 +60,18 @@ switch($requestMethod){
         break;
     case "PUT":
         $data = json_decode(file_get_contents('php://input'));
+        $movieid = filter_var($data->movieid, FILTER_SANITIZE_NUMBER_INT);
+        $username = filter_var($data->username, FILTER_SANITIZE_STRING);
+        $content = filter_var($data->content, FILTER_SANITIZE_STRING);
+        $date = filter_var($data->date, FILTER_SANITIZE_NUMBER_INT);
+
+        $validatedMovieId = movieidValidation($movieid);
+        $validatedUsername = usernameValidation($username);
+        $validatedContent = contentValidation($content);
+        $validatedDate = dateValidation($date);
+        if ( $validatedMovieId === false || $validatedUsername === false || $validatedContent === false || $validatedDate === false){
+            return;
+        }
         if (!isset($data->movieid, $data->username, $data->content, $data->date)) {
             http_response_code(400);
             $error = ['error' => 400, 'message' => 'Veuillez renseigner tous les champs'];

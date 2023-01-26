@@ -1,6 +1,7 @@
 <?php
 
 require '../Repository/ActorRepository.php';
+require '../Utils/ValidationUtils.php';
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 header('Content-Type: application/json');
 $id = $_GET['id'] ?? null;
@@ -35,6 +36,18 @@ switch($requestMethod){
         break;
     case "POST":
         $data = json_decode(file_get_contents('php://input'));
+        $firstname = filter_var($data->firstname, FILTER_SANITIZE_STRING);
+        $lastname = filter_var($data->lastname, FILTER_SANITIZE_STRING);
+        $dob = filter_var($data->dob, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^\d{4}-\d{2}-\d{2}$/")));
+        $bio = filter_var($data->bio, FILTER_SANITIZE_STRING);
+
+        $validatedFirstname = firstnameValidation($firstname);
+        $validatedLastname = lastnameValidation($lastname);
+        $validatedDob = dobValidation($dob);
+        $validatedBio = bioValidation($bio);
+        if ($validatedFirstname === false || $validatedLastname === false || $validatedDob === false || $validatedBio === false){
+            return;
+        }
         if (!isset($data->firstname, $data->lastname, $data->dob, $data->bio)) {
             http_response_code(400);
             $error = ['error' => 400, 'message' => 'Veuillez renseigner tous les champs'];
@@ -47,6 +60,18 @@ switch($requestMethod){
         break;
     case "PUT":
         $data = json_decode(file_get_contents('php://input'));
+        $firstname = filter_var($data->firstname, FILTER_SANITIZE_STRING);
+        $lastname = filter_var($data->lastname, FILTER_SANITIZE_STRING);
+        $dob = filter_var($data->dob, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^\d{4}-\d{2}-\d{2}$/")));
+        $bio = filter_var($data->bio, FILTER_SANITIZE_STRING);
+
+        $validatedFirstname = firstnameValidation($firstname);
+        $validatedLastname = lastnameValidation($lastname);
+        $validatedDob = dobValidation($dob);
+        $validatedBio = bioValidation($bio);
+        if ($validatedFirstname === false || $validatedLastname === false || $validatedDob === false || $validatedBio === false){
+            return;
+        }
         if (!isset($data->firstname, $data->lastname, $data->dob, $data->bio)) {
             http_response_code(400);
             $error = ['error' => 400, 'message' => 'Veuillez renseigner tous les champs'];

@@ -4,6 +4,7 @@ require '../Repository/MovieRepository.php';
 require '../Repository/ActorRepository.php';
 require '../Repository/DirectorRepository.php';
 require '../Repository/GenreRepository.php';
+require '../Utils/ValidationUtils.php';
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 header('Content-Type: application/json');
 $id = $_GET['id'] ?? null;
@@ -60,6 +61,18 @@ switch($requestMethod){
         break;
     case "POST":
         $data = json_decode(file_get_contents('php://input'));
+        $title = filter_var($data->title, FILTER_SANITIZE_STRING);
+        $releasedate = filter_var($data->releasedate, FILTER_SANITIZE_NUMBER_INT);
+        $plot = filter_var($data->plot, FILTER_SANITIZE_STRING);
+        $runtime = filter_var($data->runtime, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/")));
+
+        $validatedTitle = titleValidation($title);
+        $validatedReleasedate = releasedateValidation($releasedate);
+        $validatedPlot = plotValidation($plot);
+        $validatedRuntime = runtimeValidation($runtime);
+        if ($validatedTitle === false || $validatedReleasedate === false || $validatedPlot === false || $validatedRuntime === false){
+            return;
+        }
         if (!isset($data->title, $data->releasedate, $data->plot, $data->runtime)) {
             http_response_code(400);
             $error = ['error' => 400, 'message' => 'Veuillez renseigner tous les champs'];
@@ -72,6 +85,10 @@ switch($requestMethod){
         break;
     case "PUT":
         $data = json_decode(file_get_contents('php://input'));
+        $title = filter_var($data->title, FILTER_SANITIZE_STRING);
+        $releasedate = filter_var($data->releasedate, FILTER_SANITIZE_NUMBER_INT);
+        $plot = filter_var($data->plot, FILTER_SANITIZE_STRING);
+        $runtime = filter_var($data->runtime, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^\d{4}-\d{2}-\d{2}$/")));
         if (!isset($data->title, $data->releasedate, $data->plot, $data->runtime)) {
             http_response_code(400);
             $error = ['error' => 400, 'message' => 'Veuillez renseigner tous les champs'];

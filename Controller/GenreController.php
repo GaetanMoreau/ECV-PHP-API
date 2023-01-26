@@ -1,6 +1,7 @@
 <?php
 
 require '../Repository/GenreRepository.php';
+require '../Utils/ValidationUtils.php';
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 header('Content-Type: application/json');
 $id = $_GET['id'] ?? null;
@@ -35,6 +36,12 @@ switch($requestMethod){
         break;
     case "POST":
         $data = json_decode(file_get_contents('php://input'));
+        $name = filter_var($data->name, FILTER_SANITIZE_STRING);
+
+        $validatedGenreName = genreNameValidation($name);
+        if ($validatedGenreName === false){
+            return;
+        }
         if (!isset($data->name)) {
             http_response_code(400);
             $error = ['error' => 400, 'message' => 'Veuillez renseigner tous les champs'];
@@ -47,6 +54,12 @@ switch($requestMethod){
         break;
     case "PUT":
         $data = json_decode(file_get_contents('php://input'));
+        $name = filter_var($data->name, FILTER_SANITIZE_STRING);
+
+        $validatedGenreName = genreNameValidation($name);
+        if ($validatedGenreName === false){
+            return;
+        }
         if (!isset($data->name)) {
             http_response_code(400);
             $error = ['error' => 400, 'message' => 'Veuillez renseigner tous les champs'];
